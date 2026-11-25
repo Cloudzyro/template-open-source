@@ -4,9 +4,9 @@
 
 export const project = {
   name: "loam",
-  tagline: "A small, durable key-value store for JavaScript runtimes",
+  tagline: "A small, durable key‑value store for JavaScript runtimes",
   description:
-    "loam is an embedded key-value store for Node, Deno and Bun. One file on disk, crash-safe writes, ordered keys and transactions, in about 40 KB with no native dependencies.",
+    "loam is an embedded key-value store for Node, Deno and Bun. One file on disk, crash-safe writes, ordered keys and transactions, in 41 KB with no native dependencies.",
   install: "npm install loam",
   version: "2.3.0",
   license: "MIT",
@@ -83,20 +83,21 @@ const db = await open("./data/app.loam");`,
   },
   {
     caption: "Write and read. Keys sort by their parts, so related keys stay together.",
-    code: `await db.put(["orders", "2026-11-24", 1042], { total: 64.5, status: "paid" });
+    code: `const today = ["orders", "2026-11-24"];
 
-const order = await db.get(["orders", "2026-11-24", 1042]);`,
+await db.put([...today, 1042], { total: 64.5 });
+const order = await db.get([...today, 1042]);`,
   },
   {
     caption: "Scan a range and update several keys in one transaction.",
-    code: `for await (const { key, value } of db.range({ prefix: ["orders", "2026-11-24"] })) {
+    code: `for await (const { key, value } of db.range({ prefix: today })) {
   console.log(key[2], value.total);
 }
 
 await db.transaction(async (tx) => {
   const stock = await tx.get(["stock", "SKU-118"]);
   await tx.put(["stock", "SKU-118"], stock - 1);
-  await tx.put(["orders", "2026-11-24", 1043], { total: 18, status: "paid" });
+  await tx.put([...today, 1043], { total: 18 });
 });`,
   },
 ];
