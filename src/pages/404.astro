@@ -1,0 +1,36 @@
+---
+import Base from "../layouts/Base.astro";
+import { project } from "../data/project";
+---
+
+<Base title="Not found" description="This page doesn't exist.">
+  <div class="wrap box">
+    <p class="code"><code>KeyNotFound: {Astro.url.pathname}</code></p>
+    <h1>This page isn't in the store</h1>
+    <p>It may have moved to the docs.</p>
+    <p class="links"><a class="btn btn-primary" href="/">Home</a><a class="btn btn-secondary" href={project.docsUrl}>Docs</a></p>
+  </div>
+</Base>
+
+<style>
+  .box {
+    padding-block: 112px;
+    display: grid;
+    gap: 16px;
+  }
+  .code {
+    color: var(--accent);
+    font-size: 14px;
+  }
+  h1 {
+    font-size: clamp(30px, 5vw, 44px);
+  }
+  p {
+    color: var(--text-2);
+  }
+  .links {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+</style>

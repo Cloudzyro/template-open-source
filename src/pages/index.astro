@@ -1,0 +1,643 @@
+---
+import { Code } from "astro:components";
+import Base from "../layouts/Base.astro";
+import {
+  community,
+  contributors,
+  example,
+  facts,
+  features,
+  installs,
+  layers,
+  moreContributors,
+  output,
+  project,
+  sponsors,
+} from "../data/project";
+
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2);
+const clay = ["var(--clay-1)", "var(--clay-2)", "var(--clay-3)", "var(--clay-4)"];
+const ink = ["#3b1d0e", "#2a1408", "#fff7f0", "#fff7f0"];
+---
+
+<Base>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <h1>{project.tagline}</h1>
+        <p class="lede">{project.description}</p>
+
+        <div class="install" data-install>
+          <div class="tabs" role="tablist" aria-label="Package manager">
+            {
+              installs.map((i, n) => (
+                <button type="button" role="tab" aria-selected={n === 0 ? "true" : "false"} data-command={i.command}>
+                  {i.label}
+                </button>
+              ))
+            }
+          </div>
+          <div class="cmd">
+            <code><span class="prompt" aria-hidden="true">$</span> <span data-cmd>{project.install}</span></code>
+            <button type="button" class="copy" data-copy aria-label="Copy install command">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+              <span data-copy-label>Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a class="btn btn-primary" href={project.docsUrl}>Read the docs</a>
+          <a class="btn btn-secondary" href="#example">See an example</a>
+        </div>
+
+        <dl class="facts">
+          {
+            facts.map((f) => (
+              <div>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <figure class="strata" aria-labelledby="strata-cap">
+        <p class="strata-call"><code>db.put(key, value)</code></p>
+        <ol>
+          {
+            layers.map((l, i) => (
+              <li style={`--w:${l.width}%; --c:${clay[i]}; --ink:${ink[i]}`}>
+                <span class="band">
+                  <span class="b-name">{l.name}</span>
+                  <span class="b-keys">{l.keys}</span>
+                </span>
+                <span class="b-detail">{l.detail}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <figcaption id="strata-cap">
+          How a write settles: logged and synced first, sorted in memory, then compacted into deeper, larger layers on disk.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="features" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What you get in 41 KB</h2>
+        <p>The parts of a database you need for local data, and none of the parts that need a server.</p>
+      </div>
+      <ul class="features">
+        {
+          features.map((f, i) => (
+            <li>
+              <span class="f-num">{String(i + 1).padStart(2, "0")}</span>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section id="example" class="section">
+    <div class="wrap example-grid">
+      <div class="section-head sticky">
+        <h2>From install to a transaction in a dozen lines</h2>
+        <p>The same code runs on Node, Deno and Bun. Types come along for free.</p>
+        <a class="link" href={project.docsUrl}>Full API reference</a>
+      </div>
+      <div class="code-card">
+        {
+          example.map((step, i) => (
+            <div class="step">
+              <p class="step-cap">
+                <span class="step-n">{i + 1}</span>
+                {step.caption}
+              </p>
+              <Code code={step.code} lang="ts" theme="vitesse-dark" />
+            </div>
+          ))
+        }
+        <div class="out">
+          <p class="out-label">Output</p>
+          <pre>{output}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="community" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Built in the open by {contributors.length + moreContributors} people</h2>
+        <p>Maintained by two people with help from everyone below. New contributors are welcome, and most first pull requests are reviewed within a few days.</p>
+      </div>
+
+      <ul class="people">
+        {
+          contributors.map((c, i) => (
+            <li>
+              <a href={`${project.repoUrl}/commits?author=${c.handle}`}>
+                <span class="avatar" style={`--c:${clay[i % 4]}; --ink:${ink[i % 4]}`} aria-hidden="true">
+                  {initials(c.name)}
+                </span>
+                <span class="p-text">
+                  <span class="p-name">{c.name}</span>
+                  <span class="p-role">{c.role}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+        <li class="more">
+          <a href={`${project.repoUrl}/graphs/contributors`}>and {moreContributors} more</a>
+        </li>
+      </ul>
+
+      <div class="lower">
+        <div class="sponsors">
+          <h3>Sponsors</h3>
+          <p class="sub">Sponsorships pay for the maintainers' time and the test machines for every runtime.</p>
+          <dl>
+            {
+              sponsors.map((s) => (
+                <div class="tier">
+                  <dt>{s.tier}</dt>
+                  <dd>
+                    {s.names.map((n) => (
+                      <span>{n}</span>
+                    ))}
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+          <a class="btn btn-secondary" href={project.sponsorUrl}>Sponsor {project.name}</a>
+        </div>
+
+        <div class="links">
+          <h3>Docs and community</h3>
+          <ul>
+            {
+              community.map((c) => (
+                <li>
+                  <a href={c.href}>
+                    <span class="l-title">{c.title}</span>
+                    <span class="l-text">{c.text}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const box = document.querySelector<HTMLElement>("[data-install]");
+  if (box) {
+    const cmd = box.querySelector<HTMLElement>("[data-cmd]")!;
+    const tabs = [...box.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.setAttribute("aria-selected", String(t === tab)));
+        cmd.textContent = tab.dataset.command ?? "";
+      });
+      tab.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const next = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus();
+        next.click();
+      });
+    });
+    const copy = box.querySelector<HTMLButtonElement>("[data-copy]")!;
+    const label = box.querySelector<HTMLElement>("[data-copy-label]")!;
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(cmd.textContent ?? "");
+        label.textContent = "Copied";
+      } catch {
+        label.textContent = "Select and copy";
+      }
+      setTimeout(() => (label.textContent = "Copy"), 1600);
+    });
+  }
+</script>
+
+<style>
+  .hero {
+    padding-block: 88px 104px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: center;
+  }
+  h1 {
+    font-size: clamp(38px, 5.4vw, 60px);
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+  }
+  .lede {
+    margin-top: 24px;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text-2);
+    max-width: 36rem;
+  }
+
+  .install {
+    margin-top: 32px;
+    max-width: 480px;
+    background: var(--code-bg);
+    border-radius: 12px;
+    color: var(--code-text);
+    overflow: hidden;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 8px 8px 0;
+    border-bottom: 1px solid var(--code-line);
+  }
+  .tabs button {
+    font: 400 13px var(--font-sans);
+    color: var(--code-muted);
+    background: none;
+    border: 0;
+    padding: 6px 10px 8px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 150ms var(--ease), border-color 150ms var(--ease);
+  }
+  .tabs button:hover {
+    color: var(--code-text);
+  }
+  .tabs button[aria-selected="true"] {
+    color: var(--code-text);
+    border-bottom-color: var(--clay-2);
+  }
+  .cmd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 12px 12px 16px;
+  }
+  .cmd code {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+  .prompt {
+    color: var(--clay-2);
+  }
+  .copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid var(--code-line);
+    background: rgb(239 233 222 / 0.04);
+    color: var(--code-text);
+    font: 400 13px var(--font-sans);
+    cursor: pointer;
+    transition: background-color 150ms var(--ease);
+  }
+  .copy:hover {
+    background: rgb(239 233 222 / 0.1);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    margin: 32px 0 0;
+  }
+  .facts dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .facts dd {
+    margin: 2px 0 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+  }
+
+  /* The moment: a write settling through the layers of the store, drawn like soil strata. */
+  .strata {
+    margin: 0;
+    padding: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+  .strata-call {
+    font-size: 14px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed var(--line-strong);
+  }
+  .strata-call code {
+    color: var(--accent);
+  }
+  .strata ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .strata li {
+    display: grid;
+    gap: 4px;
+  }
+  .band {
+    width: var(--w);
+    min-width: 200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 8px;
+    background: var(--c);
+    color: var(--ink);
+  }
+  .b-name {
+    font-weight: 500;
+    font-size: 15px;
+  }
+  .b-keys {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .b-detail {
+    font-size: 13px;
+    color: var(--muted);
+    padding-left: 2px;
+  }
+  .strata figcaption {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  .features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+  .features li {
+    padding: 28px 28px 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .features li:not(:nth-child(3n + 1)) {
+    padding-left: 28px;
+    border-left: 1px solid var(--line);
+  }
+  .f-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .features h3 {
+    margin-top: 12px;
+    font-size: 19px;
+  }
+  .features p {
+    margin-top: 8px;
+    color: var(--text-2);
+  }
+
+  .example-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 64px;
+    align-items: start;
+  }
+  .sticky {
+    position: sticky;
+    top: 32px;
+  }
+  .link {
+    color: var(--accent);
+    text-underline-offset: 4px;
+    font-size: 15px;
+  }
+  .link:hover {
+    color: var(--accent-hover);
+  }
+  .code-card {
+    background: var(--code-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    color: var(--code-text);
+  }
+  .step + .step,
+  .out {
+    border-top: 1px solid var(--code-line);
+  }
+  .step-cap {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 16px 20px 0;
+    font-size: 14px;
+    color: var(--code-muted);
+  }
+  .step-n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--clay-2);
+  }
+  .out {
+    padding: 16px 20px 20px;
+  }
+  .out-label {
+    font-size: 13px;
+    color: var(--code-muted);
+    margin-bottom: 8px;
+  }
+  .out pre {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--clay-1);
+  }
+
+  .people {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .people a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 150ms var(--ease);
+  }
+  .people a:hover {
+    background: var(--bg-raised);
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--c);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .p-text {
+    display: grid;
+    line-height: 1.35;
+  }
+  .p-name {
+    font-size: 15px;
+  }
+  .p-role {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .more a {
+    height: 100%;
+    color: var(--accent);
+    font-size: 15px;
+    padding-left: 12px;
+  }
+
+  .lower {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 64px;
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--line);
+  }
+  .lower h3 {
+    font-size: 22px;
+  }
+  .sub {
+    margin-top: 8px;
+    color: var(--text-2);
+  }
+  .sponsors dl {
+    margin: 24px 0 28px;
+    display: grid;
+    gap: 16px;
+  }
+  .tier dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .tier dd {
+    margin: 4px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    font-size: 17px;
+  }
+  .links ul {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .links a {
+    display: grid;
+    gap: 2px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .l-title {
+    font-weight: 500;
+    transition: color 150ms var(--ease);
+  }
+  .links a:hover .l-title {
+    color: var(--accent);
+  }
+  .l-text {
+    color: var(--text-2);
+    font-size: 15px;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid,
+    .example-grid,
+    .lower {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .sticky {
+      position: static;
+    }
+    .features {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .features li,
+    .features li:not(:nth-child(3n + 1)) {
+      padding: 24px 24px 28px 0;
+      border-left: 0;
+    }
+    .features li:nth-child(2n) {
+      padding-left: 24px;
+      border-left: 1px solid var(--line);
+    }
+  }
+  @media (max-width: 640px) {
+    .hero {
+      padding-block: 48px 72px;
+    }
+    .features {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .features li,
+    .features li:nth-child(2n) {
+      padding: 24px 0;
+      border-left: 0;
+    }
+    .strata {
+      padding: 20px;
+    }
+    .band {
+      min-width: 0;
+      width: max(var(--w), 72%);
+    }
+  }
+</style>
